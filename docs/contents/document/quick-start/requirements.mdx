@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # Requirements
 
-Before developing a Slack MCP Server message queue plugin, ensure your development environment meets the following requirements:
+Before developing a message queue service for your application, ensure your development environment meets the following requirements:
 
 ## System Requirements
 
@@ -58,24 +58,24 @@ pip install uv
 - **Git**: Version 2.20 or higher
 - **GitHub Account**: For template creation and repository management (recommended)
 
-## Slack MCP Server Integration
+## Application Integration
 
-### Understanding the Slack MCP Server
+### Understanding the Target Application
 
-To develop message queue plugins, you should understand:
+To develop message queue services, you should understand:
 
-- **Slack MCP Server**: The main server that handles Slack events and webhook processing
-- **QueueBackend Protocol**: The interface your plugin must implement
-- **Plugin Discovery**: How the server finds and loads your queue backend
+- **Application Runtime**: The system that receives and dispatches events through your queue service
+- **MessageQueueBackend Protocol**: The interface your service must implement
+- **Plugin Discovery**: How the runtime finds and loads your message queue backend
 
 ### Development Dependencies
 
 Your plugin will integrate with:
 
 ```toml
-# These are provided by the Slack MCP Server
+# Example: dependencies required by your application
 dependencies = [
-    "slack-mcp-server",  # Core server functionality
+    "abstract-backend",  # Core runtime (replace with your application library)
 ]
 ```
 
@@ -141,7 +141,7 @@ Once your environment meets these requirements, you're ready to:
 
 1. 📋 **[Install the template](./installation)** - Clone and set up your plugin project
 2. 🔧 **[Implement your backend](./how-to-run)** - Build your message queue logic
-3. 🧪 **Test your plugin** - Validate integration with Slack MCP Server
+3. 🧪 **Test your service** - Validate integration with your application
 4. 🚀 **Publish your package** - Share with the community
 
 ## Common Issues & Solutions

@@ -6,11 +6,11 @@ sidebar_position: 1
 
 # Abstract Backend Implementation Template
 
-Welcome to the **Abstract Backend Implementation Template** – a comprehensive reference for building queue service implementations that integrate with the [abstract-backend](https://github.com/Chisanan232/abstract-backend) project.
+Welcome to the **Abstract Backend Implementation Template** – a comprehensive reference for building message queue service implementations that integrate with the [abstract-backend](https://github.com/Chisanan232/abstract-backend) project.
 
 ## What is This Template?
 
-This template provides a production-ready foundation for creating custom queue service implementations that integrate seamlessly with the abstract-backend event processing system. It enables developers to quickly deliver queue-enabled services as distributable Python packages that can be installed and reused without additional integration friction.
+This template provides a production-ready foundation for creating custom message queue service implementations that integrate seamlessly with the abstract-backend event processing system. It enables developers to quickly deliver queue-enabled services as distributable Python packages that can be installed and reused without additional integration friction.
 
 ## Abstract Backend Integration
 
@@ -22,8 +22,8 @@ The Abstract Backend runtime processes events through the following flow:
 
 1. **Event Reception**: External systems send events into the runtime
 2. **Event Processing**: The runtime receives and validates the payload
-3. **Queue Service Selection**: Based on `QUEUE_BACKEND` environment variable
-4. **Message Publishing**: Event is published to your custom queue service
+3. **Queue Service Selection**: Based on `MESSAGE_QUEUE_BACKEND` environment variable
+4. **Message Publishing**: Event is published to your custom message queue service
 5. **Consumer Processing**: Your custom logic consumes and processes the event
 6. **Response Handling**: Results are propagated back through the system
 
@@ -50,28 +50,28 @@ sequenceDiagram
 Abstract Backend uses Python's entry points system for plugin discovery:
 
 ```toml
-[project.entry-points."abe.backends.queue.service"]
-your_queue_name = "your_module.path:YourQueueBackend"
+[project.entry-points."abe.backends.message_queue.service"]
+your_queue_name = "your_module.path:YourMessageQueueBackend"
 ```
 
-When users set `QUEUE_BACKEND=your_queue_name` in their environment, the runtime automatically discovers and loads your queue service implementation.
+When users set `MESSAGE_QUEUE_BACKEND=your_queue_name` in their environment, the runtime automatically discovers and loads your message queue service implementation.
 
 ## Architecture Design Patterns
 
 ### 1. Protocol-Based Design
 
-All queue backends implement the `QueueBackend` protocol, ensuring consistent behavior:
+All message queue backends implement the `MessageQueueBackend` protocol, ensuring consistent behavior:
 
 ```python
 from abc import ABC, abstractmethod
 from typing import Any, AsyncIterator, Dict
 
-class QueueBackend(ABC):
+class MessageQueueBackend(ABC):
     """Protocol for message queue backend implementations."""
     
     @classmethod
     @abstractmethod
-    def from_env(cls) -> "QueueBackend":
+    def from_env(cls) -> "MessageQueueBackend":
         """Create instance from environment variables."""
         pass
     
@@ -92,11 +92,11 @@ Your plugin should support configuration through environment variables:
 
 ```python
 @classmethod
-def from_env(cls) -> "YourQueueBackend":
+def from_env(cls) -> "YourMessageQueueBackend":
     """Create instance from environment variables."""
-    connection_url = os.environ.get("YOUR_QUEUE_URL", "default://localhost")
-    username = os.environ.get("YOUR_QUEUE_USERNAME")
-    password = os.environ.get("YOUR_QUEUE_PASSWORD")
+    connection_url = os.environ.get("YOUR_MESSAGE_QUEUE_URL", "default://localhost")
+    username = os.environ.get("YOUR_MESSAGE_QUEUE_USERNAME")
+    password = os.environ.get("YOUR_MESSAGE_QUEUE_PASSWORD")
     return cls(connection_url, username, password)
 ```
 
@@ -179,13 +179,13 @@ This template can be adapted for various message queue systems:
 ### **Development & Testing**
 ```bash
 pip install abstract-backend-memory-service
-QUEUE_BACKEND=memory python -m abstract_backend.runtime
+MESSAGE_QUEUE_BACKEND=memory python -m abstract_backend.runtime
 ```
 
 ### **Production Deployment**
 ```bash
 pip install abstract-backend-redis-service
-QUEUE_BACKEND=redis
+MESSAGE_QUEUE_BACKEND=redis
 REDIS_URL=redis://prod-redis:6379/0
 python -m abstract_backend.runtime
 ```
@@ -193,7 +193,7 @@ python -m abstract_backend.runtime
 ### **Microservices Architecture**
 ```bash
 pip install abstract-backend-kafka-service
-QUEUE_BACKEND=kafka
+MESSAGE_QUEUE_BACKEND=kafka
 KAFKA_BROKERS=kafka1:9092,kafka2:9092
 python -m abstract_backend.runtime
 ```
@@ -201,7 +201,7 @@ python -m abstract_backend.runtime
 ### **Enterprise Integration**
 ```bash
 pip install abstract-backend-rabbitmq-service
-QUEUE_BACKEND=rabbitmq
+MESSAGE_QUEUE_BACKEND=rabbitmq
 RABBITMQ_URL=amqp://user:pass@rabbitmq:5672/vhost
 python -m abstract_backend.runtime
 ```
@@ -251,4 +251,4 @@ Ready to build your own message queue backend? Follow our comprehensive guide:
 4. 📚 **[API Reference](./api-references/)** - Detailed protocol documentation
 5. 🤝 **[Contributing](./contribute/)** - Share your plugin with the community
 
-Let's build the future of Slack event processing together! 🎉
+Let's build the future of message-driven applications together! 🎉

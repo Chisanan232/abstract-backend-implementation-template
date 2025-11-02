@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "abe-mq-template"
 version = "0.0.0"
-description = "📮 A queue component plugin implementation for abstract backend library."
+description = "📮 A message queue component plugin implementation for abstract backend library."
 authors = [{ name = "Chisanan232", email = "chi10211201@cycu.org.tw" }]
 requires-python = ">=3.12,<3.14"
 readme = "README.md"
@@ -39,7 +39,7 @@ Changelog = "https://chisanan232.github.io/abstract-backend-implementation-templ
 "Project Management" = "https://app.clickup.com/9018752317/v/f/90185744047/90184991515"
 
 [project.entry-points."abe.backends.message_queue.service"]
-mq_name = "abe_plugin.backends.message_queue.service.your_queue_service:YourMQBackend"
+mq_name = "abe_plugin.backends.message_queue.service.your_queue_service:YourMessageQueueBackend"
 
 [dependency-groups]
 dev = [

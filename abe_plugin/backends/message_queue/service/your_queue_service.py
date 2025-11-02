@@ -1,5 +1,5 @@
 """
-In-memory implementation of the QueueBackend protocol.
+In-memory implementation of the MessageQueueBackend protocol.
 
 This implementation is intended for development and testing only.
 It uses an asyncio.Queue to store messages in memory, which means:
@@ -12,14 +12,14 @@ import logging
 import warnings
 from typing import Any, AsyncIterator, Dict, Optional, Tuple
 
-from abe.backends.queue.base.protocol import QueueBackend
+from abe.backends.message_queue.base.protocol import MessageQueueBackend
 
 # Set up logger for the memory backend
 logger = logging.getLogger(__name__)
 
 
-class YourMQBackend(QueueBackend):
-    """In-memory implementation of QueueBackend using asyncio.Queue.
+class YourMessageQueueBackend(MessageQueueBackend):
+    """In-memory implementation of MessageQueueBackend using asyncio.Queue.
 
     This class is intended for development and testing only.
     Messages are stored in a class-level asyncio.Queue to simulate
@@ -30,14 +30,14 @@ class YourMQBackend(QueueBackend):
     _queue: "asyncio.Queue[Tuple[str, Dict[str, Any]]]" = asyncio.Queue()
 
     @classmethod
-    def from_env(cls) -> "MemoryBackend":
-        """Create a new MemoryBackend instance from environment variables.
+    def from_env(cls) -> "YourMessageQueueBackend":
+        """Create a new YourMessageQueueBackend instance from environment variables.
 
         For the memory backend, no environment variables are required.
         This method also prints a warning about using this backend for development only.
 
         Returns:
-            A new MemoryBackend instance
+            A new YourMessageQueueBackend instance
         """
         warnings.warn(
             "⚠️  Memory backend is for development/testing only. "

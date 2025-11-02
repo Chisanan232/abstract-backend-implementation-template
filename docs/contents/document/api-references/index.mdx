@@ -6,16 +6,16 @@ sidebar_position: 3
 
 # API References
 
-This section provides detailed documentation for implementing and extending message queue components for the Slack MCP server. The message queue system enables flexible webhook event processing through pluggable backend implementations.
+This section provides detailed documentation for implementing and extending message queue components for the Abstract Backend runtime. The message queue system enables flexible event processing through pluggable backend implementations that can be tailored to any application.
 
 ## Overview
 
-The Slack MCP server supports a flexible message queue architecture that allows users to:
+The Abstract Backend runtime supports a flexible message queue architecture that allows teams to:
 
-- **Extend existing backends**: Implement custom message queue backends using the `QueueBackend` protocol
-- **Plugin architecture**: Install message queue components via `pip install <slack-mcp-server-mq-plugin>`
-- **Environment-based configuration**: Configure queue backends using environment variables
-- **Seamless integration**: Zero-code integration with the Slack MCP server
+- **Extend existing backends**: Implement custom message queue backends using the `MessageQueueBackend` protocol
+- **Plugin architecture**: Install message queue components via `pip install <abstract-backend-mq-plugin>`
+- **Environment-based configuration**: Configure message queue backends using environment variables
+- **Seamless integration**: Drop-in connectivity with your application runtime
 
 ## Architecture Design
 
@@ -23,44 +23,45 @@ The Slack MCP server supports a flexible message queue architecture that allows 
 
 ```mermaid
 graph TB
-    A[Slack Event] --> B[Slack MCP Server]
-    B --> C[Queue Backend Interface]
+    A[External Event] --> B[Application Runtime]
+    B --> C[Message Queue Interface]
     C --> D[Your Custom MQ Backend]
-    C --> E[Memory Backend]
+    C --> E[In-Memory Backend]
     C --> F[Redis Backend]
     C --> G[RabbitMQ Backend]
-    
+
     D --> H[Message Processing]
     E --> H
     F --> H
     G --> H
-    
-    H --> I[Custom Business Logic]
+
+    H --> I[Domain Logic]
 ```
 
 ### Plugin Discovery System
 
-The Slack MCP server uses Python's entry points system to automatically discover and load message queue backends:
+Abstract Backend uses Python's entry points system to automatically discover and load message queue backends:
 
 ```toml
-[project.entry-points."slack_mcp.backends.queue"]
+[project.entry-points."abe.backends.message_queue.service"]
 your_backend_name = "your_package.module:YourBackendClass"
 ```
 
-## QueueBackend Protocol
+## MessageQueueBackend Protocol
 
 ### Interface Definition
 
-All message queue backends must implement the `QueueBackend` protocol:
+All message queue backends must implement the `MessageQueueBackend` protocol:
 
 ```python
 from typing import Any, AsyncIterator, Dict, Optional, Protocol
 
-class QueueBackend(Protocol):
+
+class MessageQueueBackend(Protocol):
     """Protocol defining the interface for message queue backends."""
     
     @classmethod
-    def from_env(cls) -> "QueueBackend":
+    def from_env(cls) -> "MessageQueueBackend":
         """Create backend instance from environment variables."""
         ...
     
@@ -131,7 +132,7 @@ async def publish(self, key: str, payload: Dict[str, Any]) -> None:
         
         # Publish to your message queue
         await self._connection.publish(
-            exchange="slack_events",
+            exchange="application_events",
             routing_key=key,
             body=message,
             properties={"delivery_mode": 2}  # Persistent
@@ -161,7 +162,7 @@ async def publish(self, key: str, payload: Dict[str, Any]) -> None:
 **Example**:
 ```python
 async def consume(self, *, group: Optional[str] = None) -> AsyncIterator[Dict[str, Any]]:
-    queue_name = f"slack_events_{group}" if group else "slack_events"
+    queue_name = f"application_events_{group}" if group else "application_events"
     
     try:
         async with self._connection.consume(queue_name) as consumer:
@@ -191,12 +192,12 @@ import json
 import logging
 from typing import Any, AsyncIterator, Dict, Optional
 
-from abe.backends.queue.base.protocol import QueueBackend
+from abe.backends.message_queue.base.protocol import MessageQueueBackend
 
 logger = logging.getLogger(__name__)
 
 
-class YourMQBackend(QueueBackend):
+class YourMQBackend(MessageQueueBackend):
     """Your custom message queue backend implementation."""
 
     def __init__(self, host: str, port: int, username: str, password: str):
@@ -238,7 +239,7 @@ class YourMQBackend(QueueBackend):
 Add the entry point to your `pyproject.toml`:
 
 ```toml
-[project.entry-points."slack_mcp.backends.queue"]
+[project.entry-points."abe.backends.message_queue.service"]
 your_backend = "your_package.backends.your_backend:YourMQBackend"
 ```
 
@@ -248,13 +249,13 @@ Document the required environment variables for your backend:
 
 ```bash
 # Your backend configuration
-export QUEUE_BACKEND="your_backend"
-export MQ_HOST="localhost"
-export MQ_PORT="5672"
-export MQ_USERNAME="user"
-export MQ_PASSWORD="password"
-export MQ_VHOST="/"
-export MQ_EXCHANGE="slack_events"
+export MESSAGE_QUEUE_BACKEND="your_backend"
+export MESSAGE_QUEUE_HOST="localhost"
+export MESSAGE_QUEUE_PORT="5672"
+export MESSAGE_QUEUE_USERNAME="user"
+export MESSAGE_QUEUE_PASSWORD="password"
+export MESSAGE_QUEUE_VHOST="/"
+export MESSAGE_QUEUE_EXCHANGE="application_events"
 ```
 
 ### Step 4: Error Handling Best Practices
@@ -265,7 +266,8 @@ Implement robust error handling:
 import asyncio
 from contextlib import asynccontextmanager
 
-class YourMQBackend(QueueBackend):
+
+class YourMQBackend(MessageQueueBackend):
     async def __aenter__(self):
         """Async context manager entry."""
         await self.connect()
@@ -338,27 +340,27 @@ class TestYourMQBackend:
 
 ### Integration Testing
 
-Test integration with the Slack MCP server:
+Test integration with your application runtime:
 
 ```python
 import os
 import pytest
-from abe.backends import get_backend
+from abe.backends import get_message_queue_backend
 
 
 @pytest.mark.integration
 async def test_backend_integration():
-    """Test backend integration with Slack MCP server."""
-    os.environ["QUEUE_BACKEND"] = "your_backend"
-    os.environ["MQ_HOST"] = "localhost"
+    """Test backend integration with the application runtime."""
+    os.environ["MESSAGE_QUEUE_BACKEND"] = "your_backend"
+    os.environ["MESSAGE_QUEUE_HOST"] = "localhost"
     # Set other required env vars
 
-    backend = get_backend()
+    backend = get_message_queue_backend()
     assert isinstance(backend, YourMQBackend)
 
     # Test publish/consume cycle
     test_payload = {"event": "app_mention", "data": {"text": "test"}}
-    await backend.publish("slack.app_mention", test_payload)
+    await backend.publish("application.event", test_payload)
 
     async for message in backend.consume():
         assert message == test_payload
@@ -372,7 +374,7 @@ async def test_backend_integration():
 For backends that support connection pooling:
 
 ```python
-class PooledMQBackend(QueueBackend):
+class PooledMQBackend(MessageQueueBackend):
     def __init__(self, pool_size: int = 10):
         self.pool_size = pool_size
         self._pool = None
@@ -397,7 +399,8 @@ Custom serialization for complex payloads:
 import pickle
 import base64
 
-class SerializingMQBackend(QueueBackend):
+
+class SerializingMQBackend(MessageQueueBackend):
     def _serialize(self, payload: Dict[str, Any]) -> str:
         """Serialize payload to string."""
         pickled = pickle.dumps(payload)
@@ -414,7 +417,7 @@ class SerializingMQBackend(QueueBackend):
 Handle failed message processing:
 
 ```python
-class DLQSupportedBackend(QueueBackend):
+class DLQSupportedBackend(MessageQueueBackend):
     async def consume(self, *, group: Optional[str] = None) -> AsyncIterator[Dict[str, Any]]:
         max_retries = 3
         
@@ -473,7 +476,7 @@ python -m twine upload dist/*
 
 3. Users can then install:
 ```bash
-pip install your-slack-mcp-backend
+pip install your-message-queue-backend
 ```
 
 ## Troubleshooting
@@ -482,7 +485,7 @@ pip install your-slack-mcp-backend
 
 1. **Backend Not Found**
    - Verify entry point configuration in `pyproject.toml`
-   - Ensure package is installed in the same environment as Slack MCP server
+   - Ensure package is installed in the same environment as your application runtime
 
 2. **Connection Errors**
    - Check network connectivity
@@ -513,8 +516,8 @@ logger = logging.getLogger("your_package.backends")
 Use environment variables for debugging:
 
 ```bash
-export SLACK_MCP_DEBUG=true
-export QUEUE_BACKEND_DEBUG=true
+export ABSTRACT_BACKEND_DEBUG=true
+export MESSAGE_QUEUE_BACKEND_DEBUG=true
 ```
 
 ## Reference Implementation

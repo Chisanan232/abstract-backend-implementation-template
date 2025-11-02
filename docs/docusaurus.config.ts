@@ -66,7 +66,7 @@ const config: Config = {
         showLastUpdateTime: true,
         showLastUpdateAuthor: true,
         editUrl:
-          'https://github.com/Chisanan232/abstract-backend/tree/master/docs/',
+          'https://github.com/Chisanan232/abstract-backend-implementation-template/tree/master/docs/',
         versions: {
           current: {
             label: 'Next',
@@ -90,7 +90,7 @@ const config: Config = {
         showLastUpdateTime: true,
         showLastUpdateAuthor: true,
         editUrl:
-          'https://github.com/Chisanan232/abstract-backend/tree/master/docs/',
+          'https://github.com/Chisanan232/abstract-backend-implementation-template/tree/master/docs/',
         versions: {
           current: {
             label: 'Next',
@@ -111,7 +111,7 @@ const config: Config = {
         routeBasePath: 'blog',
         showReadingTime: true,
         editUrl:
-          'https://github.com/Chisanan232/abstract-backend/tree/master/docs/',
+          'https://github.com/Chisanan232/abstract-backend-implementation-template/tree/master/docs/',
       },
     ],
     [
@@ -120,7 +120,7 @@ const config: Config = {
         // Options for docusaurus-search-local
         hashed: true,
         language: ['en'],
-        docsRouteBasePath: ['/abstract-backend'],
+        docsRouteBasePath: ['/abstract-backend-implementation-template'],
         docsDir: ['./contents/document', './contents/development'],
         blogDir: ['./contents/blog'],
         highlightSearchTermsOnTargetPage: true,
@@ -182,7 +182,7 @@ const config: Config = {
           dropdownItemsAfter: [],
         },
         {
-          href: 'https://github.com/Chisanan232/abstract-backend',
+          href: 'https://github.com/Chisanan232/abstract-backend-implementation-template',
           label: 'GitHub',
           position: 'right',
         },
@@ -213,11 +213,11 @@ const config: Config = {
           items: [
             {
               label: 'GitHub Issues',
-              href: 'https://github.com/Chisanan232/abstract-backend/issues',
+              href: 'https://github.com/Chisanan232/abstract-backend-implementation-template/issues',
             },
             {
               label: 'GitHub Discussions',
-              href: 'https://github.com/Chisanan232/abstract-backend/discussions',
+              href: 'https://github.com/Chisanan232/abstract-backend-implementation-template/discussions',
             },
           ],
         },
@@ -226,7 +226,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub Repository',
-              href: 'https://github.com/Chisanan232/abstract-backend',
+              href: 'https://github.com/Chisanan232/abstract-backend-implementation-template',
             },
           ],
         },
@@ -247,7 +247,7 @@ const config: Config = {
       tagName: 'link',
       attributes: {
         rel: 'canonical',
-        href: 'https://chisanan232.github.io/abstract-backend/docs/introduction',
+        href: 'https://chisanan232.github.io/abstract-backend-implementation-template/docs/introduction',
       },
     },
   ],
