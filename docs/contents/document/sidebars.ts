@@ -22,7 +22,7 @@ const sidebars: SidebarsConfig = {
       label: '🧑‍💻 API References',
       items: [
         'api-references/api-references',
-        'api-references/queue-backend-protocol',
+        'api-references/message-queue-backend-protocol',
       ],
     },
     {
