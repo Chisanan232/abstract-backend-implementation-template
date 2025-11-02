@@ -29,7 +29,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 #    "Programming Language :: Python :: 3.14",  # TODO: Because of PyO3's maximum supported version (3.13)
 ]
-dependencies = []
+dependencies = [
+    "abstract-backend>=0.0.1",
+]
 
 [project.urls]
 Homepage = "https://github.com/Chisanan232/abstract-backend-implementation-template"
