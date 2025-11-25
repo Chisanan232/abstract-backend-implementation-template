@@ -45,7 +45,7 @@ mq_name = "abe_plugin.backends.message_queue.service.your_queue_service:YourMess
 
 [dependency-groups]
 dev = [
-    "pytest>=8.1.1,<9",
+    "pytest>=8.1.1,<10",
     "pytest-cov>=5.0.0,<8",
     "coverage~=7.10",
     "pytest-rerunfailures>=14.0,<17",
